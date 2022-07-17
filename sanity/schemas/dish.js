@@ -10,7 +10,7 @@ export default {
       validation: (Rule) => Rule.required(),
     },
     {
-      name: 'short_descripion',
+      name: 'short_description',
       type: 'string',
       title: 'Short description',
       validation: (Rule) => Rule.max(200),
@@ -18,7 +18,7 @@ export default {
     {
       name: 'price',
       type: 'number',
-      title: 'Price of the dish in GBP',
+      title: 'Prezzo',
     },
     {
       name: 'image',
