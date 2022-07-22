@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useSelector } from 'react-redux';
 import { selectRestaurant } from '../features/RestaurantSlice';
-import { removeFromBasket, selectBasketItems } from '../features/basketSlice';
+import { removeFromBasket, selectBasketItems, selectBasketTotal } from '../features/basketSlice';
 import { useDispatch } from 'react-redux';
 import { XCircleIcon } from 'react-native-heroicons/solid'
 import { urlFor } from '../sanity';
@@ -15,7 +15,7 @@ const BasketScreen = () => {
     const items = useSelector(selectBasketItems);
     const [groupedItemsInBasket, setGroupedItemsInBasket] = useState([])
     const dispatch = useDispatch();
-    
+    const basketTotal = useSelector(selectBasketTotal)
     useEffect(() => {
         const groupedItems = items.reduce((results, item) => {
             (results[item.id] = results[item.id] || []).push(item);
@@ -52,11 +52,11 @@ const BasketScreen = () => {
             <Text className='text-[#00CCBB]'>Cambia</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView>
+        <ScrollView className='divide-y divide-gray-200'>
           {
             Object.entries(groupedItemsInBasket).map(([key, items]) => (
-              <View key={key}>
-                  <Text>{items.length} x</Text>
+              <View key={key} className='flex-row items-center space-x-3 bg-white py-2 px-5'>
+                  <Text className='text-[#00CCBB]'>{items.length} x</Text>
                   <Image 
                     source={{
                       uri: urlFor(items[0]?.image).url()
@@ -79,6 +79,29 @@ const BasketScreen = () => {
             ) )
           }
         </ScrollView>
+        <View className='p-5 bg-white mt-5 space-y-4'>
+          <View className='flex-row justify-between'>
+            <Text className='text-gray-400'>Subtotale</Text>
+            <Text className='text-gray-400'>
+              <Currency quantity={basketTotal} currency='EUR' />
+            </Text>
+          </View>
+          <View className='flex-row justify-between'>
+            <Text className='text-gray-400'>Trasporto</Text>
+            <Text className='text-gray-400'>
+              <Currency quantity={2.99} currency='EUR' />
+            </Text>
+          </View>
+          <View className='flex-row justify-between'>
+            <Text>Totale</Text>
+            <Text className='font-extrabold'>
+              <Currency quantity={basketTotal + 2.99} currency='EUR' />
+            </Text>
+          </View>
+          <TouchableOpacity className='rounded-lg bg-[#00CCBB] p-4'>
+            <Text className='text-center text-white text-lg font-bold'>Effettua l'ordine</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   )
